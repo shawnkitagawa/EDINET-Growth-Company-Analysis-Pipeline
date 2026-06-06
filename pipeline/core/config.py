@@ -9,3 +9,4 @@ if not API_KEY:
 
 URL_METADATA = "https://api.edinet-fsa.go.jp/api/v2/documents.json"
 URL_DOWNLOAD = "https://api.edinet-fsa.go.jp/api/v2/documents"
+BUCKET_NAME = "edinet-growth-pipeline-data-shawn-20260606"
