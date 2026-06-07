@@ -1,0 +1,19 @@
+USE ROLE ACCOUNTADMIN; 
+USE DATABASE EDINET_DB; 
+USE SCHEMA RAW; 
+
+
+CREATE OR REPLACE STAGE EDINET_DB_METADATA_STAGE
+    URL = 'gcs://edinet-growth-pipeline-data-shawn-20260606/raw/metadata/csv/'
+    STORAGE_INTEGRATION = GCS_EDINET_INT; 
+
+CREATE OR REPLACE STAGE EDINET_DOCUMENTS_STAGE
+    URL = 'gcs://edinet-growth-pipeline-data-shawn-20260606/raw/documents/'
+    STORAGE_INTEGRATION = GCS_EDINET_INT; 
+
+CREATE OR REPLACE STAGE EDINET_REFERENCE_STAGE 
+    URL = 'gcs://edinet-growth-pipeline-data-shawn-20260606/raw/reference/csv/'
+    STORAGE_INTEGRATION = GCS_EDINET_INT; 
+
+
+
