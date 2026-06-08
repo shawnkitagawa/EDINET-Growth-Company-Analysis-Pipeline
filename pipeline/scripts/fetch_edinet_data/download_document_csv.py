@@ -35,10 +35,8 @@ def save_documents_to_csv(json_path: str, start_date: str, end_date: str):
         "Connection": "close",
     }
 
-    data_range_name = f"{start_date}_to_{end_date}"
-    data_dir = Path("data/raw/documents") / data_range_name
-    data_dir.mkdir(parents=True, exist_ok=True)
-
+    # data_range_name = f"{start_date}_to_{end_date}"
+    data_name = start_date
     failed_doc_ids = []
     consecutive_failures = 0
     max_consecutive_failures = 10
@@ -46,7 +44,8 @@ def save_documents_to_csv(json_path: str, start_date: str, end_date: str):
     for document in document_informations:
         doc_id = document["docID"]
         destination_path = (
-            f"raw/documents/{start_date}_to_{end_date}/{doc_id}.csv"
+            # f"raw/documents/{data_range_name}/{doc_id}.csv"
+            f"raw/documents/{data_name}/{doc_id}.csv"
         )
                     
         blob = bucket.blob(destination_path)
@@ -138,10 +137,14 @@ def save_documents_to_csv(json_path: str, start_date: str, end_date: str):
 
         time.sleep(2)
 
-    if failed_doc_ids:
-        failed_path = data_dir / "failed_doc_ids.txt"
-        with open(failed_path, "w", encoding="utf-8") as f:
-            for doc_id in failed_doc_ids:
-                f.write(doc_id + "\n")
+        if failed_doc_ids:
+            failed_text = "\n".join(failed_doc_ids) + "\n"
 
-        print(f"Saved failed doc IDs to {failed_path}")
+            failed_path = f"raw/documents/{data_name}/failed_doc_ids.txt"
+            failed_blob = bucket.blob(failed_path)
+            failed_blob.upload_from_string(
+                failed_text,
+                content_type="text/plain",
+            )
+
+            print(f"Uploaded failed doc IDs to GCS: {failed_path}")

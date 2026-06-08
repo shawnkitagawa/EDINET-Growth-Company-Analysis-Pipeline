@@ -3,7 +3,7 @@ import json
 import pandas as pd 
  
 
-def save_document_metadata(documents: list[dict], start_date: str, end_date: str, output_dir: str = "data/raw/metadata"):
+def save_document_metadata(documents: list[dict], start_date: str, end_date: str,file_name: str, output_dir: str = "data/raw/metadata"):
     
     json_dir = Path(f"{output_dir}/json")
     csv_dir = Path(f"{output_dir}/csv")
@@ -12,10 +12,10 @@ def save_document_metadata(documents: list[dict], start_date: str, end_date: str
     csv_dir.mkdir(parents=True, exist_ok=True)
 
 
-    filename = f"edinet_documents_{start_date}_to_{end_date}"
+    # filename = f"edinet_documents_{start_date}_to_{end_date}"
 
-    json_path = json_dir / f"{filename}.json"
-    csv_path = csv_dir / f"{filename}.csv"
+    json_path = json_dir / f"{file_name}.json"
+    csv_path = csv_dir / f"{file_name}.csv"
 
 
     with open(json_path, "w", encoding = "utf-8") as f: 

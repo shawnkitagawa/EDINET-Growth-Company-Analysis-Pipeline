@@ -7,7 +7,7 @@ import time
 
 
 
-def run_edinet_metadata_pipeline(start_date: str, date_length: int):
+def run_edinet_metadata_pipeline(start_date: str, date_length: int, file_name: str):
 
     if not API_KEY:
         raise ValueError("EDINET_API_KEY is not set. Please check your .env file.")
@@ -33,17 +33,30 @@ def run_edinet_metadata_pipeline(start_date: str, date_length: int):
         updated_filtered_documents
     )
 
+    # if len(unique_company_document_information) == 0:
+    #     raise ValueError(
+    #         "No annual report documents were found after filtering. "
+    #         "Please check the EDINET_API_KEY, target date range, and document filters."
+    #     )
+
     if len(unique_company_document_information) == 0:
-        raise ValueError(
+        print(
             "No annual report documents were found after filtering. "
-            "Please check the EDINET_API_KEY, target date range, and document filters."
+            "This can be normal for a daily scheduled run. Exiting successfully.",
+            flush=True,
         )
+        return
+
+
 
     save_document_metadata(
         documents=unique_company_document_information,
         start_date=start_date,
-        end_date=str(end_date)
+        end_date=str(end_date),
+        file_name = file_name
     )
+
+    return unique_company_document_information
 
 
 def fetch_all_edinet_documents(start: date, date_length: int) -> tuple[list[dict], list[dict]]:
