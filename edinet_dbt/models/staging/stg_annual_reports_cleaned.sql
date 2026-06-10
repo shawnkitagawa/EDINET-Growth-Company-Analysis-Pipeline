@@ -33,6 +33,6 @@ SELECT
     docTypeCode,
     fetchDate
 
-FROM document_metadata
+FROM {{ source('edinet_raw', 'DOCUMENT_METADATA_RAW') }}
 WHERE docTypeCode IN ('120', '130')
   AND formCode IN ('030000', '030001')

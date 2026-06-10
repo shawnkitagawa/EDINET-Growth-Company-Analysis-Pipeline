@@ -1,14 +1,14 @@
 edinet_dbt:
   target: dev
   outputs:
-  dev:
-  type: snowflake
-  account: ISTTWVJ-LV42488
-  user: SHAWNK
-  password: vB6SaQDuh6iw6zw
-  role: ACCOUNTADMIN
-  database: EDINET_DB
-  warehouse: COMPUTE_WH
-  schema: RAW
-  threads: 4
-  client_session_keep_alive: false
+    dev:
+      type: snowflake
+      account: ISTTWVJ-LV42488
+      user: SHAWNK
+      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+      role: ACCOUNTADMIN
+      database: EDINET_DB
+      warehouse: COMPUTE_WH
+      schema: ANALYTICS
+      threads: 4
+      client_session_keep_alive: false

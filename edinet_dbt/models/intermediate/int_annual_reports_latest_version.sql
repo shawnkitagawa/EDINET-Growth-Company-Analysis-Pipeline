@@ -1,4 +1,4 @@
--- depends_on: {{ ref('stg_annual_reports_cleaned') }}
+
 {{ config(materialized='table') }}
 
 SELECT * EXCLUDE(row_num)

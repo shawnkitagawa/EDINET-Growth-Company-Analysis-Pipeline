@@ -29,5 +29,5 @@ SELECT
     g.four_year_consecutive_growth
 
 FROM {{ ref('int_company_growth_analysis') }} g
-LEFT JOIN edinet_company_master m
+LEFT JOIN {{ source('edinet_raw', 'EDINET_COMPANY_MASTER_RAW') }} m
     ON g.edinetCode = m.edinetCode

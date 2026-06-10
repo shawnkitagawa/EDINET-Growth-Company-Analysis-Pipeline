@@ -39,5 +39,5 @@ SELECT
         THEN TRY_CAST(value_text AS BIGINT)
     END) AS current_sales
 
-FROM raw_annual_report_values
+FROM {{ source('edinet_raw', 'RAW_ANNUAL_REPORT_VALUES') }}
 GROUP BY docID
