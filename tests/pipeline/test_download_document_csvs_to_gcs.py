@@ -4,7 +4,7 @@ import zipfile
 import pytest
 import requests
 
-from pipeline.scripts.fetch_edinet_data.download_document_csvs_to_gcs import (
+from pipeline.scripts.fetch_edinet_data.download_document_csv import (
     download_document_csvs_to_gcs,
 )
 
