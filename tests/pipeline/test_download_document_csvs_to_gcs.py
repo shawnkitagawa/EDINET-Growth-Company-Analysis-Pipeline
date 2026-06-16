@@ -9,12 +9,16 @@ from pipeline.scripts.fetch_edinet_data.download_document_csv import (
 )
 
 
+MODULE_PATH = "pipeline.scripts.fetch_edinet_data.download_document_csv"
+
+
 class FakeBlob:
     def __init__(self, exists_result=False):
         self.exists_result = exists_result
         self.uploaded_file_content = None
         self.uploaded_string_content = None
         self.content_type = None
+        self.timeout = None
 
     def exists(self):
         return self.exists_result
@@ -90,17 +94,17 @@ def test_download_document_csvs_to_gcs_uploads_asr_csv(monkeypatch):
         )
 
     monkeypatch.setattr(
-        "pipeline.scripts.fetch_edinet_data.download_document_csvs_to_gcs.storage.Client",
+        f"{MODULE_PATH}.storage.Client",
         fake_storage_client,
     )
 
     monkeypatch.setattr(
-        "pipeline.scripts.fetch_edinet_data.download_document_csvs_to_gcs.requests.get",
+        f"{MODULE_PATH}.requests.get",
         fake_requests_get,
     )
 
     monkeypatch.setattr(
-        "pipeline.scripts.fetch_edinet_data.download_document_csvs_to_gcs.time.sleep",
+        f"{MODULE_PATH}.time.sleep",
         lambda seconds: None,
     )
 
@@ -145,17 +149,17 @@ def test_download_document_csvs_to_gcs_skips_existing_blob(monkeypatch):
         )
 
     monkeypatch.setattr(
-        "pipeline.scripts.fetch_edinet_data.download_document_csvs_to_gcs.storage.Client",
+        f"{MODULE_PATH}.storage.Client",
         fake_storage_client,
     )
 
     monkeypatch.setattr(
-        "pipeline.scripts.fetch_edinet_data.download_document_csvs_to_gcs.requests.get",
+        f"{MODULE_PATH}.requests.get",
         fake_requests_get,
     )
 
     monkeypatch.setattr(
-        "pipeline.scripts.fetch_edinet_data.download_document_csvs_to_gcs.time.sleep",
+        f"{MODULE_PATH}.time.sleep",
         lambda seconds: None,
     )
 
@@ -181,17 +185,17 @@ def test_download_document_csvs_to_gcs_does_not_fail_when_no_asr_csv(monkeypatch
         )
 
     monkeypatch.setattr(
-        "pipeline.scripts.fetch_edinet_data.download_document_csvs_to_gcs.storage.Client",
+        f"{MODULE_PATH}.storage.Client",
         fake_storage_client,
     )
 
     monkeypatch.setattr(
-        "pipeline.scripts.fetch_edinet_data.download_document_csvs_to_gcs.requests.get",
+        f"{MODULE_PATH}.requests.get",
         fake_requests_get,
     )
 
     monkeypatch.setattr(
-        "pipeline.scripts.fetch_edinet_data.download_document_csvs_to_gcs.time.sleep",
+        f"{MODULE_PATH}.time.sleep",
         lambda seconds: None,
     )
 
@@ -216,17 +220,17 @@ def test_download_document_csvs_to_gcs_records_failed_doc_id_on_http_error(monke
         return FakeResponse(status_code=500, content=b"")
 
     monkeypatch.setattr(
-        "pipeline.scripts.fetch_edinet_data.download_document_csvs_to_gcs.storage.Client",
+        f"{MODULE_PATH}.storage.Client",
         fake_storage_client,
     )
 
     monkeypatch.setattr(
-        "pipeline.scripts.fetch_edinet_data.download_document_csvs_to_gcs.requests.get",
+        f"{MODULE_PATH}.requests.get",
         fake_requests_get,
     )
 
     monkeypatch.setattr(
-        "pipeline.scripts.fetch_edinet_data.download_document_csvs_to_gcs.time.sleep",
+        f"{MODULE_PATH}.time.sleep",
         lambda seconds: None,
     )
 
@@ -256,17 +260,17 @@ def test_download_document_csvs_to_gcs_records_failed_doc_id_on_bad_zip(monkeypa
         )
 
     monkeypatch.setattr(
-        "pipeline.scripts.fetch_edinet_data.download_document_csvs_to_gcs.storage.Client",
+        f"{MODULE_PATH}.storage.Client",
         fake_storage_client,
     )
 
     monkeypatch.setattr(
-        "pipeline.scripts.fetch_edinet_data.download_document_csvs_to_gcs.requests.get",
+        f"{MODULE_PATH}.requests.get",
         fake_requests_get,
     )
 
     monkeypatch.setattr(
-        "pipeline.scripts.fetch_edinet_data.download_document_csvs_to_gcs.time.sleep",
+        f"{MODULE_PATH}.time.sleep",
         lambda seconds: None,
     )
 
