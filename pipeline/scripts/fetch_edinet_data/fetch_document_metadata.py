@@ -2,9 +2,9 @@ import time
 import requests
 from datetime import datetime, timedelta, date
 
-from core.config import API_KEY, URL_METADATA
-from core.storage import upload_document_metadata_csv_to_gcs
-from scripts.fetch_edinet_data.filter_documents import (
+from pipeline.core.config import API_KEY, URL_METADATA
+from pipeline.core.storage import upload_document_metadata_csv_to_gcs
+from pipeline.scripts.fetch_edinet_data.filter_documents import (
     filter_documents,
     get_unique_documents_by_company,
 )

@@ -3,12 +3,11 @@ import random
 import time
 import zipfile
 from io import BytesIO
-from pathlib import Path
 from google.cloud import storage
 
 import requests
 
-from core.config import API_KEY, URL_DOWNLOAD, BUCKET_NAME
+from pipeline.core.config import API_KEY, URL_DOWNLOAD, BUCKET_NAME
 
 
 client= storage.Client()
