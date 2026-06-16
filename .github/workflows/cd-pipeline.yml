@@ -12,9 +12,9 @@ on:
       - ".dockerignore"
       - ".github/workflows/cd-pipeline.yml"
 
-  permissions:
-  contents: read
-  id-token: write
+permissions:
+contents: read
+id-token: write
 
 jobs:
   deploy:
