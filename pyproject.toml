@@ -17,3 +17,7 @@ dependencies = [
     "snowflake-connector-python",
     "pytest",
 ]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
