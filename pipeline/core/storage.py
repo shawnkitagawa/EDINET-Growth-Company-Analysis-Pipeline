@@ -1,7 +1,7 @@
 import csv
 from pathlib import Path 
 from google.cloud import storage
-from core.config import BUCKET_NAME
+from pipeline.core.config import BUCKET_NAME
 from io import StringIO 
 import csv
 
