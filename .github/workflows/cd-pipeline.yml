@@ -12,6 +12,10 @@ on:
       - ".dockerignore"
       - ".github/workflows/cd-pipeline.yml"
 
+  permissions:
+  contents: read
+  id-token: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -26,9 +30,7 @@ jobs:
           workload_identity_provider: projects/319854487428/locations/global/workloadIdentityPools/githu-actions-pool/providers/github-actions-provider
           service_account: github-actions-deployer@edinet-growth-pipeline.iam.gserviceaccount.com
 
-      # Docker auth to Artifact Registry goes here
-
-       - name: Set up gcloud
+      - name: Set up gcloud
         uses: google-github-actions/setup-gcloud@v2
 
       - name: Docker auth to Artifact Registry
@@ -38,14 +40,16 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
-            -t asia-northeast1-docker.pkg.dev/PROJECT_ID/edinet-repo/edinet-pipeline:${{ github.sha }} .
+            -f pipeline/dockerfile \
+            -t asia-northeast1-docker.pkg.dev/319854487428/edinet-repo/edinet-pipeline:${{ github.sha }} \
+            .
 
       - name: Push Docker image
         run: |
-          docker push asia-northeast1-docker.pkg.dev/PROJECT_ID/edinet-repo/edinet-pipeline:${{ github.sha }}
+          docker push asia-northeast1-docker.pkg.dev/319854487428/edinet-repo/edinet-pipeline:${{ github.sha }}
 
       - name: Update Cloud Run Job
         run: |
           gcloud run jobs update edinet-pipeline-job \
-            --image asia-northeast1-docker.pkg.dev/PROJECT_ID/edinet-repo/edinet-pipeline:${{ github.sha }} \
+            --image asia-northeast1-docker.pkg.dev/319854487428/edinet-repo/edinet-pipeline:${{ github.sha }} \
             --region asia-northeast1

@@ -2,8 +2,8 @@ from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo 
 import gc
 
-from scripts.fetch_edinet_data.download_document_csv import download_document_csvs_to_gcs
-from scripts.fetch_edinet_data.fetch_document_metadata import run_edinet_metadata_pipeline
+from pipeline.scripts.fetch_edinet_data.download_document_csv import download_document_csvs_to_gcs
+from pipeline.scripts.fetch_edinet_data.fetch_document_metadata import run_edinet_metadata_pipeline
 
 
 def main():
