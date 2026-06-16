@@ -1,0 +1,51 @@
+# Python environment
+.venv/
+__pycache__/
+*.pyc
+
+# Secrets / environment files
+.env
+*.env
+pipeline/.env
+
+# Local data
+pipeline/data/
+local_dev/data/
+*.duckdb
+*.db# Python environment
+.venv/
+__pycache__/
+*.pyc
+
+# Secrets / environment files
+.env
+*.env
+pipeline/.env
+
+# Local data
+pipeline/data/
+local_dev/data/
+*.duckdb
+*.db
+*.csv
+*.zip
+
+# dbt generated files
+edinet_dbt/target/
+edinet_dbt/dbt_packages/
+edinet_dbt/logs/
+
+# OS / editor
+.DS_Store
+.vscode/
+*.csv
+*.zip
+
+# dbt generated files
+edinet_dbt/target/
+edinet_dbt/dbt_packages/
+edinet_dbt/logs/
+
+# OS / editor
+.DS_Store
+.vscode/

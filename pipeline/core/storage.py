@@ -1,51 +1,41 @@
+import csv
 from pathlib import Path 
 from google.cloud import storage
 from core.config import BUCKET_NAME
+from io import StringIO 
+import csv
 
 
-
-def upload_folder_to_gcs(local_folder: str, destination_prefix: str) -> None:
-    folder = Path(local_folder)
-
-    if not folder.exists():
-        raise FileNotFoundError(f"Local folder does not exist: {local_folder}")
-
-    if not folder.is_dir():
-        raise NotADirectoryError(f"Expected a folder, got: {local_folder}")
-
-    files = [file_path for file_path in folder.rglob("*") if file_path.is_file()]
-
-    print(f"Starting upload folder: {local_folder}", flush=True)
-    print(f"Destination prefix: {destination_prefix}", flush=True)
-    print(f"Found {len(files)} files to upload", flush=True)
+def upload_document_metadata_csv_to_gcs(
+    documents: list[dict],
+    file_name: str,
+) -> str:
+    if not documents:
+        raise ValueError("No documents to upload.")
 
     client = storage.Client()
     bucket = client.bucket(BUCKET_NAME)
 
-    for i, file_path in enumerate(files, start=1):
-        relative_path = file_path.relative_to(folder)
-        destination_path = f"{destination_prefix}/{relative_path}".replace("\\", "/")
+    destination_path = f"raw/metadata/csv/{file_name}.csv"
 
-        print(f"[{i}/{len(files)}] Uploading {file_path} -> {destination_path}", flush=True)
+    output = StringIO()
 
-        blob = bucket.blob(destination_path)
-        blob.upload_from_filename(str(file_path), timeout=120)
+    fieldnames = documents[0].keys()
 
-        print(f"[{i}/{len(files)}] Uploaded {destination_path}", flush=True)
+    writer = csv.DictWriter(output, fieldnames=fieldnames)
+    writer.writeheader()
+    writer.writerows(documents)
 
-    print(f"Finished uploading folder: {local_folder}", flush=True)
-
-
-
-    
-
-
-def upload_file_to_gcs(local_path: str, destination_path:str) -> None: 
-    client = storage.Client()
-    bucket = client.bucket(BUCKET_NAME)
     blob = bucket.blob(destination_path)
+    blob.upload_from_string(
+        output.getvalue(),
+        content_type="text/csv",
+    )
 
-    blob.upload_from_filename(local_path)
+    print(f"Uploaded metadata CSV to GCS: gs://{BUCKET_NAME}/{destination_path}", flush=True)
+
+    return destination_path
+
 
 
 

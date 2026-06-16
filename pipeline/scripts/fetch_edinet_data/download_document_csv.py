@@ -16,14 +16,16 @@ bucket = client.bucket(BUCKET_NAME)
 
 
 
-def save_documents_to_csv(json_path: str, start_date: str, end_date: str):
-    with open(json_path, "r", encoding="utf-8") as f:
-        document_informations = json.load(f)
+def download_document_csvs_to_gcs(
+    document_informations: list[dict],
+    start_date: str,
+):
+    if not document_informations:
+        print("No documents to download. Exiting successfully.", flush=True)
+        return []
 
-    print(f"Loaded {len(document_informations)} documents")
-
-    if len(document_informations) == 0:
-        raise ValueError("Requires document_information before turning into CSV")
+    client = storage.Client()
+    bucket = client.bucket(BUCKET_NAME)
 
     params = {
         "type": 5,
@@ -35,24 +37,18 @@ def save_documents_to_csv(json_path: str, start_date: str, end_date: str):
         "Connection": "close",
     }
 
-    # data_range_name = f"{start_date}_to_{end_date}"
-    data_name = start_date
     failed_doc_ids = []
     consecutive_failures = 0
     max_consecutive_failures = 10
 
     for document in document_informations:
         doc_id = document["docID"]
-        destination_path = (
-            # f"raw/documents/{data_range_name}/{doc_id}.csv"
-            f"raw/documents/{data_name}/{doc_id}.csv"
-        )
-                    
+        destination_path = f"raw/documents/{start_date}/{doc_id}.csv"
+
         blob = bucket.blob(destination_path)
 
-
         if blob.exists():
-            print(f"Already exists, skipping: {destination_path}")
+            print(f"Already exists, skipping: {destination_path}", flush=True)
             continue
 
         success = False
@@ -81,7 +77,7 @@ def save_documents_to_csv(json_path: str, start_date: str, end_date: str):
                     ]
 
                     if not asr_files:
-                        print(f"No ASR CSV found for {doc_id}")
+                        print(f"No ASR CSV found for {doc_id}", flush=True)
                         success = True
                         break
 
@@ -89,13 +85,12 @@ def save_documents_to_csv(json_path: str, start_date: str, end_date: str):
 
                     with z.open(selected_csv) as source:
                         blob.upload_from_file(
-                            source, 
-                            content_type = "text/csv",
-                            timeout = 120, 
+                            source,
+                            content_type="text/csv",
+                            timeout=120,
                         )
 
-                    print(f"Uploaded directly to GCS: {destination_path}", flush=True)
-
+                print(f"Uploaded directly to GCS: {destination_path}", flush=True)
 
                 success = True
                 consecutive_failures = 0
@@ -110,41 +105,45 @@ def save_documents_to_csv(json_path: str, start_date: str, end_date: str):
                 wait = min(60, 5 * attempt + random.uniform(0, 3))
                 print(
                     f"Request failed on {doc_id}: {type(e).__name__}. "
-                    f"Retry {attempt}/3 after {wait:.1f}s"
+                    f"Retry {attempt}/3 after {wait:.1f}s",
+                    flush=True,
                 )
                 time.sleep(wait)
 
             except requests.exceptions.HTTPError as e:
                 status = e.response.status_code if e.response else None
-                print(f"HTTP error on {doc_id}: status={status}")
+                print(f"HTTP error on {doc_id}: status={status}", flush=True)
                 break
 
             except zipfile.BadZipFile:
-                print(f"Invalid ZIP file for {doc_id}, skipping...")
+                print(f"Invalid ZIP file for {doc_id}, skipping...", flush=True)
                 break
 
         if not success:
             failed_doc_ids.append(doc_id)
             consecutive_failures += 1
-            print(f"Failed after retries, skipping {doc_id}")
+            print(f"Failed after retries, skipping {doc_id}", flush=True)
 
         if consecutive_failures >= max_consecutive_failures:
             print(
                 f"Stopping early because {consecutive_failures} documents failed in a row. "
-                "EDINET may be throttling or closing Cloud Run connections."
+                "EDINET may be throttling or closing Cloud Run connections.",
+                flush=True,
             )
             break
 
         time.sleep(2)
 
-        if failed_doc_ids:
-            failed_text = "\n".join(failed_doc_ids) + "\n"
+    if failed_doc_ids:
+        failed_text = "\n".join(failed_doc_ids) + "\n"
+        failed_path = f"raw/documents/{start_date}/failed_doc_ids.txt"
 
-            failed_path = f"raw/documents/{data_name}/failed_doc_ids.txt"
-            failed_blob = bucket.blob(failed_path)
-            failed_blob.upload_from_string(
-                failed_text,
-                content_type="text/plain",
-            )
+        failed_blob = bucket.blob(failed_path)
+        failed_blob.upload_from_string(
+            failed_text,
+            content_type="text/plain",
+        )
 
-            print(f"Uploaded failed doc IDs to GCS: {failed_path}")
+        print(f"Uploaded failed doc IDs to GCS: {failed_path}", flush=True)
+
+    return failed_doc_ids
