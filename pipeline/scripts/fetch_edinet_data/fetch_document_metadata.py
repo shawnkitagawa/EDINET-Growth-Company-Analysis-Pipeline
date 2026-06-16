@@ -2,7 +2,7 @@ import time
 import requests
 from datetime import datetime, timedelta, date
 
-from pipeline.core.config import API_KEY, URL_METADATA
+from pipeline.core.config import API_KEY, URL_METADATA, require_config
 from pipeline.core.storage import upload_document_metadata_csv_to_gcs
 from pipeline.scripts.fetch_edinet_data.filter_documents import (
     filter_documents,
@@ -17,8 +17,7 @@ def fetch_current_date_documents(
     url_metadata: str = URL_METADATA,
     sleep_func=time.sleep,
 ) -> list[dict]:
-    if not api_key:
-        raise ValueError("EDINET_API_KEY is not set. Please check your .env file.")
+    require_config()
 
     params = {
         "date": date_str,
