@@ -10,10 +10,6 @@ import requests
 from pipeline.core.config import API_KEY, URL_DOWNLOAD, BUCKET_NAME
 
 
-client= storage.Client()
-bucket = client.bucket(BUCKET_NAME)
-
-
 
 def download_document_csvs_to_gcs(
     document_informations: list[dict],
