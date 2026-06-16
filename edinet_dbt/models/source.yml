@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: edinet_raw
+    database: EDINET_DB
+    schema: RAW
+    tables:
+      - name: DOCUMENT_METADATA_RAW
+      - name: EDINET_COMPANY_MASTER_RAW
+      - name: RAW_ANNUAL_REPORT_VALUES

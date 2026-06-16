@@ -1,0 +1,23 @@
+[project]
+name = "edinet-growth-company-analysis-pipeline"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.9"
+
+dependencies = [
+    "requests",
+    "python-dotenv",
+    "google-cloud-storage",
+    "pandas",
+    "duckdb",
+    "dbt-core",
+    "dbt-duckdb",
+    "dbt-snowflake",
+    "snowflake-connector-python",
+    "pytest",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
