@@ -14,17 +14,21 @@ from pipeline.core.config import get_api_key, URL_DOWNLOAD, BUCKET_NAME
 def download_document_csvs_to_gcs(
     document_informations: list[dict],
     start_date: str,
+    api_key: Optional[str] = None,
 ):
     if not document_informations:
         print("No documents to download. Exiting successfully.", flush=True)
         return []
+
+    if api_key is None:
+        api_key = get_api_key()
 
     client = storage.Client()
     bucket = client.bucket(BUCKET_NAME)
 
     params = {
         "type": 5,
-        "Subscription-Key": get_api_key(),
+        "Subscription-Key": api_key,
     }
 
     headers = {

@@ -44,6 +44,10 @@ def test_fetch_current_date_documents_returns_results():
         sleep_func=lambda seconds: None,
     )
 
+    assert result == [
+        {"docID": "S100TEST", "docDescription": "有価証券報告書"}
+    ]
+
     
 def test_fetch_current_date_documents_returns_empty_list_when_no_data_after_timeout():
     def fake_request_get(url, params, timeout):

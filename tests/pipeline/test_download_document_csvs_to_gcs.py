@@ -111,6 +111,7 @@ def test_download_document_csvs_to_gcs_uploads_asr_csv(monkeypatch):
     result = download_document_csvs_to_gcs(
         document_informations=[{"docID": "S100TEST"}],
         start_date="2026-06-15",
+        api_key="fake-api-key"
     )
 
     expected_path = "raw/documents/2026-06-15/S100TEST.csv"
@@ -125,6 +126,7 @@ def test_download_document_csvs_to_gcs_returns_empty_list_when_no_documents():
     result = download_document_csvs_to_gcs(
         document_informations=[],
         start_date="2026-06-15",
+        api_key="fake-api-key"
     )
 
     assert result == []
@@ -166,6 +168,7 @@ def test_download_document_csvs_to_gcs_skips_existing_blob(monkeypatch):
     result = download_document_csvs_to_gcs(
         document_informations=[{"docID": "S100TEST"}],
         start_date="2026-06-15",
+        api_key="fake-api-key"
     )
 
     assert result == []
@@ -202,6 +205,7 @@ def test_download_document_csvs_to_gcs_does_not_fail_when_no_asr_csv(monkeypatch
     result = download_document_csvs_to_gcs(
         document_informations=[{"docID": "S100TEST"}],
         start_date="2026-06-15",
+        api_key="fake-api-key"
     )
 
     assert result == []
@@ -237,6 +241,7 @@ def test_download_document_csvs_to_gcs_records_failed_doc_id_on_http_error(monke
     result = download_document_csvs_to_gcs(
         document_informations=[{"docID": "S100FAIL"}],
         start_date="2026-06-15",
+        api_key="fake-api-key"
     )
 
     failed_path = "raw/documents/2026-06-15/failed_doc_ids.txt"
@@ -276,7 +281,8 @@ def test_download_document_csvs_to_gcs_records_failed_doc_id_on_bad_zip(monkeypa
 
     result = download_document_csvs_to_gcs(
         document_informations=[{"docID": "S100BADZIP"}],
-        start_date="2026-06-15",
+        start_date="2026-06-15"
+        api_key="fake-api-key"
     )
 
     failed_path = "raw/documents/2026-06-15/failed_doc_ids.txt"
