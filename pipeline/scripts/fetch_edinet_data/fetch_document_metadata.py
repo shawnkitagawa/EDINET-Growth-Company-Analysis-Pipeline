@@ -13,12 +13,13 @@ from pipeline.scripts.fetch_edinet_data.filter_documents import (
 def fetch_current_date_documents(
     date_str: str,
     request_get=requests.get,
-    api_key: str = get_api_key(),
+    api_key: str | None = None,
     url_metadata: str = URL_METADATA,
     sleep_func=time.sleep,
 ) -> list[dict]:
-    if not api_key:
-        raise ValueError("EDINET_API_KEY is not set.")
+    
+    if api_key is None:
+        api_key = get_api_key()
 
     if not url_metadata:
         raise ValueError("URL_METADATA is not set.")
