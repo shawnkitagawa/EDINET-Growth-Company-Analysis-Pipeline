@@ -2,7 +2,7 @@ import time
 import requests
 from datetime import datetime, timedelta, date
 
-from pipeline.core.config import API_KEY, URL_METADATA
+from pipeline.core.config import get_api_key, URL_METADATA
 from pipeline.core.storage import upload_document_metadata_csv_to_gcs
 from pipeline.scripts.fetch_edinet_data.filter_documents import (
     filter_documents,
@@ -13,7 +13,7 @@ from pipeline.scripts.fetch_edinet_data.filter_documents import (
 def fetch_current_date_documents(
     date_str: str,
     request_get=requests.get,
-    api_key: str = API_KEY,
+    api_key: str = get_api_key(),
     url_metadata: str = URL_METADATA,
     sleep_func=time.sleep,
 ) -> list[dict]:

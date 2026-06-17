@@ -7,7 +7,7 @@ from google.cloud import storage
 
 import requests
 
-from pipeline.core.config import API_KEY, URL_DOWNLOAD, BUCKET_NAME
+from pipeline.core.config import get_api_key, URL_DOWNLOAD, BUCKET_NAME
 
 
 
@@ -24,7 +24,7 @@ def download_document_csvs_to_gcs(
 
     params = {
         "type": 5,
-        "Subscription-Key": API_KEY,
+        "Subscription-Key": get_api_key(),
     }
 
     headers = {
