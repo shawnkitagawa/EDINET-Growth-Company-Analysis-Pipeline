@@ -1,0 +1,6 @@
+edinet_dbt:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "../data/processed/edinet.duckdb"

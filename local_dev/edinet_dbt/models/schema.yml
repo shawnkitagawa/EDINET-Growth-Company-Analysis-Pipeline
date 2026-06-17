@@ -1,0 +1,82 @@
+version: 2
+
+models:
+  - name: stg_annual_reports_cleaned
+    description: "EDINETのメタデータから、有価証券報告書と訂正有価証券報告書を抽出し、会計期間が欠損している場合は、可能な範囲でdocDescriptionから補完"
+    columns:
+      - name: docID
+        description: "EDINETの書類ID"
+        tests:
+          - not_null
+      - name: edinetCode
+        description: "EDINET上の企業コード"
+        tests:
+          - not_null
+      - name: periodStart
+        description: "会計期間の開始日"
+      - name: periodEnd
+        description: "会計期間の終了日"
+      - name: docTypeCode
+        description: "（書類種別コード）120を有価証券報告書、130を訂正有価証券報告書とし扱っている"
+
+  - name: int_annual_reports_latest_version
+    description: "同じ企業・同じ会計期間の書類又は訂正有価証券報告書が複数ある場合に、提出日時が最も新しい書類を残す作業"
+
+  - name: int_company_latest_annual_report
+    description: "企業ごとに、会計期間の終了日が最も新しい有価証券報告書を1件に絞る"
+
+  - name: int_annual_report_revenue
+    description: "有価証券報告書CSVから、売上高に関する値を抽出"
+    columns:
+      - name: docID
+        description: "EDINETの書類ID"
+        tests:
+          - not_null
+          - unique
+      - name: current_sales
+        description: "当期の売上高"
+      - name: previous_sales
+        description: "前期の売上高"
+      - name: sales_4_years_ago
+        description: "4期前の売上高"
+
+  - name: int_company_growth_analysis
+    description: "企業ごとに売上成長率を計算する「1年成長率、4年間の総成長率、4年間CAGR、連続成長の判定を作成する」"
+    columns:
+      - name: edinetCode
+        description: "EDINET上の企業コード"
+        tests:
+          - not_null
+      - name: one_year_growth_rate
+        description: "前期から当期までの売上成長率"
+      - name: four_year_total_growth_rate
+        description: "4期前から当期までの売上成長率"
+      - name: four_year_cagr
+        description: "4年間の年平均成長率"
+
+  - name: company_growth_analysis_with_industry
+    description: "成長率の計算結果に、EDINETコードリストから取得した業種や上場区分を結合"
+    columns:
+      - name: edinetCode
+        description: "EDINET上の企業コード"
+        tests:
+          - not_null
+      - name: industry
+        description: "EDINETコードリスト上の提出者業種"
+      - name: listing_status
+        description: "EDINETコードリスト上の上場区分"
+
+  - name: high_growth_one_year
+    description: "1年の売上成長率が40%以上の企業を抽出"
+
+  - name: high_growth_four_year_total
+    description: "4年間の売上成長率が40%以上の企業を抽出"
+
+  - name: high_growth_four_year_cagr
+    description: "4年間CAGRが40%以上の企業を抽出"
+
+  - name: strict_high_growth_companies
+    description: "4年間CAGRが40%以上で、かつ各年の売上も連続して成長している企業を抽出"
+
+  - name: high_growth_companies
+    description: "高成長企業の最終テーブル"

@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+.mypy_cache/
+.pytest_cache/
+.venv/
+venv/
+
+# Environment / secrets
+.env
+*.env
+.env.*
+*.p8
+*.pem
+*credentials*.json
+*service-account*.json
+private_key*
+
+# Local databases
+*.duckdb
+*.duckdb.wal
+*.db
+*.sqlite
+
+# Raw / generated data
+data/
+raw/
+outputs/
+exports/
+downloads/
+local_dev/raw_data/
+local_dev/duckdb/*.duckdb
+local_dev/duckdb/*.duckdb.wal
+
+# Large CSVs by default
+*.csv
+
+# Allow only safe small sample CSVs / dbt seeds
+!local_dev/sample_data/*.csv
+!edinet_dbt/seeds/*.csv
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# dbt
+edinet_dbt/target/
+edinet_dbt/dbt_packages/
+edinet_dbt/logs/
