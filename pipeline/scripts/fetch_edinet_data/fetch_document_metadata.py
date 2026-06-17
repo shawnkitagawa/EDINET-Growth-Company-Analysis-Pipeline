@@ -123,7 +123,7 @@ def run_edinet_metadata_pipeline(
     start_date: str,
     date_length: int,
     file_name: str,
-    api_key: str = API_KEY,
+    api_key: Optional[str] = None,
     fetch_all_documents_func=fetch_all_edinet_documents,
     get_unique_documents_func=get_unique_documents_by_company,
     upload_metadata_func=upload_document_metadata_csv_to_gcs,
