@@ -4,6 +4,7 @@ import time
 import zipfile
 from io import BytesIO
 from google.cloud import storage
+from typing import Optional
 
 import requests
 
