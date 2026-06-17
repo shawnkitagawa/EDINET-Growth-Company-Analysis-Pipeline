@@ -16,6 +16,7 @@ dependencies = [
     "dbt-snowflake",
     "snowflake-connector-python",
     "pytest",
+    "google-cloud-secret-manager>=2.28.0",
 ]
 
 [tool.pytest.ini_options]

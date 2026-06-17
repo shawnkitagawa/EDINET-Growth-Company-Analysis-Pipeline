@@ -1,8 +1,9 @@
 import time
 import requests
 from datetime import datetime, timedelta, date
+from typing import Optional
 
-from pipeline.core.config import API_KEY, URL_METADATA
+from pipeline.core.config import get_api_key, URL_METADATA
 from pipeline.core.storage import upload_document_metadata_csv_to_gcs
 from pipeline.scripts.fetch_edinet_data.filter_documents import (
     filter_documents,
@@ -13,12 +14,13 @@ from pipeline.scripts.fetch_edinet_data.filter_documents import (
 def fetch_current_date_documents(
     date_str: str,
     request_get=requests.get,
-    api_key: str = API_KEY,
+    api_key: Optional[str] = None,
     url_metadata: str = URL_METADATA,
     sleep_func=time.sleep,
 ) -> list[dict]:
-    if not api_key:
-        raise ValueError("EDINET_API_KEY is not set.")
+    
+    if api_key is None:
+        api_key = get_api_key()
 
     if not url_metadata:
         raise ValueError("URL_METADATA is not set.")
@@ -121,7 +123,7 @@ def run_edinet_metadata_pipeline(
     start_date: str,
     date_length: int,
     file_name: str,
-    api_key: str = API_KEY,
+    api_key: Optional[str] = None,
     fetch_all_documents_func=fetch_all_edinet_documents,
     get_unique_documents_func=get_unique_documents_by_company,
     upload_metadata_func=upload_document_metadata_csv_to_gcs,

@@ -46,9 +46,13 @@ jobs:
       - name: Check Python syntax 
         run: uv run python -m compileall pipeline
 
-      - name: Check pipeline import 
+      - name: Check pipeline import
+        env:
+          GCP_PROJECT_ID: dummy-project
+          EDINET_API_KEY_SECRET_NAME: dummy-secret
+          GCS_BUCKET_NAME: dummy-bucket
         run: uv run python -c "import pipeline.main; print('Pipeline import OK')"
-
+        
       - name: Run tests 
         run: uv run pytest tests/pipeline/
 

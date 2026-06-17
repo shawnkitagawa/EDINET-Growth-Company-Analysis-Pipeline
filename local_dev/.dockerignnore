@@ -1,0 +1,13 @@
+edinet_dbt/target/
+edinet_dbt/dbt_packages/
+edinet_dbt/logs/
+edinet_dbt/dev.duckdb
+edinet_dbt/.user.yml
+
+.venv/
+__pycache__/
+.env
+data/raw/
+data/processed/
+data/output/
+logs/
