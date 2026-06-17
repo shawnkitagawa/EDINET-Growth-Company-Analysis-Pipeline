@@ -281,7 +281,7 @@ def test_download_document_csvs_to_gcs_records_failed_doc_id_on_bad_zip(monkeypa
 
     result = download_document_csvs_to_gcs(
         document_informations=[{"docID": "S100BADZIP"}],
-        start_date="2026-06-15"
+        start_date="2026-06-15",
         api_key="fake-api-key"
     )
 
