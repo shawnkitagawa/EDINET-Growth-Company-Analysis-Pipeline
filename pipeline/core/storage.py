@@ -5,7 +5,6 @@ from pipeline.core.config import BUCKET_NAME
 from io import StringIO 
 import csv
 
-
 def upload_document_metadata_csv_to_gcs(
     documents: list[dict],
     file_name: str,
