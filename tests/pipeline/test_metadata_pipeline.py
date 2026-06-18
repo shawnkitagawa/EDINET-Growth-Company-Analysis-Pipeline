@@ -1,4 +1,4 @@
-# tests/test_metadata_pipeline.py
+# tests/pipeline/test_metadata_pipeline.py
 
 from datetime import date
 
@@ -48,7 +48,7 @@ def test_fetch_current_date_documents_returns_results():
         {"docID": "S100TEST", "docDescription": "有価証券報告書"}
     ]
 
-    
+
 def test_fetch_current_date_documents_returns_empty_list_when_no_data_after_timeout():
     def fake_request_get(url, params, timeout):
         raise requests.exceptions.Timeout()
@@ -140,7 +140,7 @@ def test_fetch_all_edinet_documents_stops_when_target_date_is_future():
 def test_run_edinet_metadata_pipeline_uploads_metadata_when_documents_exist():
     uploaded = {}
 
-    def fake_fetch_all_documents_func(start, date_length):
+    def fake_fetch_all_documents_func(start, date_length, fetch_current_date_func=None):
         normal_docs = [
             {
                 "docID": "S100TEST",
@@ -186,7 +186,7 @@ def test_run_edinet_metadata_pipeline_uploads_metadata_when_documents_exist():
 def test_run_edinet_metadata_pipeline_does_not_upload_when_no_documents():
     upload_called = False
 
-    def fake_fetch_all_documents_func(start, date_length):
+    def fake_fetch_all_documents_func(start, date_length, fetch_current_date_func=None):
         return [], []
 
     def fake_get_unique_documents_func(normal_docs, correction_docs):
