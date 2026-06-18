@@ -10,6 +10,4 @@ RUN uv sync --frozen --no-dev
 
 COPY pipeline/ ./pipeline/
 
-WORKDIR /app/pipeline
-
-CMD ["uv", "run", "python", "main.py"]
+CMD ["uv", "run", "python", "-m", "pipeline.main"]

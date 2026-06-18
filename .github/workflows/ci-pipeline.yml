@@ -71,4 +71,4 @@ jobs:
             -e EDINET_API_KEY_SECRET_NAME=dummy-secret \
             -e GCS_BUCKET_NAME=dummy-bucket \
             edinet-pipeline-ci-test:${{ github.sha }} \
-            uv run python -c "from core.config import get_api_key, URL_DOWNLOAD, BUCKET_NAME; print('Docker config import OK')"
+            uv run python -c "from pipeline.core.config import get_api_key, URL_DOWNLOAD, BUCKET_NAME; print('Docker config import OK')"
