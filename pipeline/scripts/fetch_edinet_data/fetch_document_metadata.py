@@ -118,7 +118,6 @@ def fetch_all_edinet_documents(
 
     return all_filtered_documents, updated_filtered_documents
 
-
 def run_edinet_metadata_pipeline(
     start_date: str,
     date_length: int,
@@ -129,8 +128,8 @@ def run_edinet_metadata_pipeline(
     upload_metadata_func=upload_document_metadata_csv_to_gcs,
     today_func=date.today,
 ):
-    if not api_key:
-        raise ValueError("EDINET_API_KEY is not set. Please check your .env file.")
+    if api_key is None:
+        api_key = get_api_key()
 
     try:
         start = datetime.strptime(start_date, "%Y-%m-%d").date()
@@ -149,6 +148,10 @@ def run_edinet_metadata_pipeline(
     all_filtered_documents, updated_filtered_documents = fetch_all_documents_func(
         start=start,
         date_length=date_length,
+        fetch_current_date_func=lambda date_str: fetch_current_date_documents(
+            date_str=date_str,
+            api_key=api_key,
+        ),
     )
 
     unique_company_document_information = get_unique_documents_func(
