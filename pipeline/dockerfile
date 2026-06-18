@@ -2,10 +2,14 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY requirements.txt .
+RUN pip install --no-cache-dir uv
 
-RUN pip install --no-cache-dir -r requirements.txt
+COPY pyproject.toml uv.lock ./
 
-COPY . .
+RUN uv sync --frozen --no-dev
 
-CMD ["python", "main.py"]
+COPY pipeline/ ./pipeline/
+
+WORKDIR /app/pipeline
+
+CMD ["uv", "run", "python", "main.py"]
