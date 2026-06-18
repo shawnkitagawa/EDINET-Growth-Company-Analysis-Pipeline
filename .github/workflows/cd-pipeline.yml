@@ -8,7 +8,7 @@ on:
       - "pipeline/**"
       - "pyproject.toml"
       - "uv.lock"
-      - "Dockerfile"
+      - "pipeline/dockerfile"
       - ".dockerignore"
       - ".github/workflows/cd-pipeline.yml"
 
@@ -28,7 +28,7 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: projects/319854487428/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider
+          workload_identity_provider: projects/319854487428/locations/global/workloadIdentityPools/githu-actions-pool/providers/github-actions-provider
           service_account: github-actions-deployer@edinet-growth-pipeline.iam.gserviceaccount.com
 
       - name: Set up gcloud
@@ -42,15 +42,16 @@ jobs:
         run: |
           docker build \
             -f pipeline/dockerfile \
-            -t asia-northeast1-docker.pkg.dev/319854487428/edinet-repo/edinet-pipeline:${{ github.sha }} \
+            -t asia-northeast1-docker.pkg.dev/edinet-growth-pipeline/edinet-repo/edinet-pipeline:${{ github.sha }} \
             .
 
       - name: Push Docker image
         run: |
-          docker push asia-northeast1-docker.pkg.dev/319854487428/edinet-repo/edinet-pipeline:${{ github.sha }}
+          docker push asia-northeast1-docker.pkg.dev/edinet-growth-pipeline/edinet-repo/edinet-pipeline:${{ github.sha }}
 
       - name: Update Cloud Run Job
         run: |
           gcloud run jobs update edinet-pipeline-job \
-            --image asia-northeast1-docker.pkg.dev/319854487428/edinet-repo/edinet-pipeline:${{ github.sha }} \
+            --image asia-northeast1-docker.pkg.dev/edinet-growth-pipeline/edinet-repo/edinet-pipeline:${{ github.sha }} \
             --region asia-northeast1
+            --project edinet-growth-pipeline
