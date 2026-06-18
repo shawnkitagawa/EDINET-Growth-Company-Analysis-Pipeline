@@ -26,7 +26,10 @@ class FakeResponse:
 
 
 def test_fetch_current_date_documents_returns_results():
-    def fake_request_get(url, params, timeout):
+    def fake_request_get(url, params, headers, timeout):
+        assert headers["User-Agent"] == "edinet-growth-pipeline/1.0"
+        assert headers["Connection"] == "close"
+
         return FakeResponse(
             status_code=200,
             json_data={
@@ -50,7 +53,10 @@ def test_fetch_current_date_documents_returns_results():
 
 
 def test_fetch_current_date_documents_returns_empty_list_when_no_data_after_timeout():
-    def fake_request_get(url, params, timeout):
+    def fake_request_get(url, params, headers, timeout):
+        assert headers["User-Agent"] == "edinet-growth-pipeline/1.0"
+        assert headers["Connection"] == "close"
+
         raise requests.exceptions.Timeout()
 
     result = fetch_current_date_documents(
@@ -65,7 +71,10 @@ def test_fetch_current_date_documents_returns_empty_list_when_no_data_after_time
 
 
 def test_fetch_current_date_documents_raises_error_for_auth_failure():
-    def fake_request_get(url, params, timeout):
+    def fake_request_get(url, params, headers, timeout):
+        assert headers["User-Agent"] == "edinet-growth-pipeline/1.0"
+        assert headers["Connection"] == "close"
+
         return FakeResponse(status_code=403, json_data={})
 
     with pytest.raises(ValueError, match="EDINET API authentication failed"):

@@ -31,13 +31,20 @@ def fetch_current_date_documents(
         "Subscription-Key": api_key,
     }
 
+    headers = {
+        "User-Agent": "edinet-growth-pipeline/1.0",
+        "Connection": "close",
+    }
+
     data = None
 
     for attempt in range(1, 4):
         try:
+
             response = request_get(
                 url_metadata,
                 params=params,
+                headers=headers,
                 timeout=(5, 10),
             )
 
