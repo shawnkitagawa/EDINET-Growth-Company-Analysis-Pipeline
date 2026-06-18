@@ -1,0 +1,29 @@
+project_id = "your-gcp-project-id"
+region     = "asia-northeast1"
+
+environment = "dev"
+
+bucket_name        = "your-bucket-name"
+service_account_id = "edinet-pipeline-runner"
+
+artifact_registry_repo = "edinet-repo"
+docker_image_name      = "edinet-pipeline"
+
+cloud_run_job_name = "edinet-pipeline-job"
+cloud_run_memory   = "512Mi"
+cloud_run_cpu      = "1"
+cloud_run_timeout  = "7200s"
+
+scheduler_job_name = "edinet-pipeline-daily"
+scheduler_cron     = "0 3 * * *"
+scheduler_timezone = "Asia/Tokyo"
+
+edinet_api_key_secret_name = "edinet-api-key"
+
+github_repo   = "your-github-owner/your-repo"
+github_branch = "main"
+
+workload_identity_pool_id     = "your-workload-identity-pool"
+workload_identity_provider_id = "your-provider"
+
+scheduler_runner_service_account_email = "your-scheduler-service-account@your-project.iam.gserviceaccount.com"

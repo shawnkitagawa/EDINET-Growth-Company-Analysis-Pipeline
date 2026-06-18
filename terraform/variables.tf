@@ -3,6 +3,12 @@ variable "project_id" {
   type        = string
 }
 
+variable "environment" {
+  description = "Deployment environment name, such as dev, staging, or prod."
+  type        = string
+  default     = "dev"
+}
+
 variable "region" {
   description = "GCP region"
   type        = string
@@ -17,25 +23,21 @@ variable "bucket_name" {
 variable "service_account_id" {
   description = "Service account ID for the pipeline runner"
   type        = string
-  default     = "edinet-pipeline-runner"
 }
 
 variable "artifact_registry_repo" {
   description = "Artifact Registry repository name"
   type        = string
-  default     = "edinet-repo"
 }
 
 variable "docker_image_name" {
   description = "Docker image name"
   type        = string
-  default     = "edinet-pipeline"
 }
 
 variable "cloud_run_job_name" {
   description = "Cloud Run Job name"
   type        = string
-  default     = "edinet-pipeline-job"
 }
 
 variable "cloud_run_memory" {
@@ -53,13 +55,12 @@ variable "cloud_run_cpu" {
 variable "cloud_run_timeout" {
   description = "Cloud Run Job timeout in seconds"
   type        = string
-  default     = "600s"
+  default     = "7200s"
 }
 
 variable "scheduler_job_name" {
   description = "Cloud Scheduler job name"
   type        = string
-  default     = "edinet-daily-scheduler"
 }
 
 variable "scheduler_cron" {
@@ -77,7 +78,6 @@ variable "scheduler_timezone" {
 variable "edinet_api_key_secret_name" {
   description = "Secret Manager secret name for EDINET API key"
   type        = string
-  default     = "EDINET_API_KEY"
 }
 
 variable "github_repo" {
@@ -94,11 +94,17 @@ variable "github_branch" {
 variable "workload_identity_pool_id" {
   description = "Workload Identity Pool ID for GitHub Actions"
   type        = string
-  default     = "github-actions-pool"
 }
 
 variable "workload_identity_provider_id" {
   description = "Workload Identity Provider ID for GitHub Actions"
   type        = string
-  default     = "github-provider"
 }
+
+
+
+variable "scheduler_runner_service_account_email" {
+  description = "Existing service account used by Cloud Scheduler to trigger the Cloud Run Job."
+  type        = string
+}
+

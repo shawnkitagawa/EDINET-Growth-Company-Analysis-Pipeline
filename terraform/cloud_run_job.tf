@@ -32,7 +32,7 @@ resource "google_cloud_run_v2_job" "edinet_pipeline_job" {
         }
       }
 
-      timeout = var.cloud_run_timeout
+      timeout     = var.cloud_run_timeout
       max_retries = 1
     }
   }
@@ -43,5 +43,5 @@ resource "google_cloud_run_v2_job" "edinet_pipeline_job" {
     google_service_account.pipeline_runner,
     google_secret_manager_secret_iam_member.pipeline_secret_accessor,
     google_storage_bucket_iam_member.pipeline_bucket_writer
-]
+  ]
 }

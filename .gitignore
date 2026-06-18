@@ -49,3 +49,13 @@ edinet_dbt/logs/
 # OS / editor
 .DS_Store
 .vscode/
+
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+terraform.tfvars
+*.tfvars
