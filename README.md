@@ -1,164 +1,120 @@
-# EDINET Financial Disclosure Data Platform with Snowflake, dbt, and AI Agents
+# EDINET Financial Disclosure Data Platform with Snowflake, dbt, and Cortex Agent
 
-This project is a production-style data and AI engineering platform for collecting, storing, transforming, and preparing EDINET financial disclosure data for growth company analysis and future AI-powered financial workflows.
+This project is a production-style data and AI engineering platform for collecting, transforming, and analyzing EDINET financial disclosure data.
 
-The current focus is building a reliable cloud-based financial data pipeline using Python, GCP, Terraform, CI/CD, Snowflake, and dbt. The next direction is to extend the platform toward AI-assisted financial analysis, likely using Snowflake Cortex Agent and cost-conscious Snowflake development practices.
+The system collects financial disclosure data from the EDINET API, stores raw files in Google Cloud Storage, loads the data into Snowflake, transforms it with dbt, and prepares AI-ready tables for analysis with Snowflake Cortex Agent.
+
+The platform combines cloud automation, data warehousing, dbt transformations, CI/CD, infrastructure as code, and an AI agent layer.
+
+---
 
 ## Architecture
 
-![Architecture Diagram](architecture/edinet_snowflake_rag_architecture.png)
+### High-Level Architecture
 
-## Project Direction
+The high-level architecture shows the overall data flow from EDINET data ingestion to Snowflake transformation and AI-ready tables.
 
-This project is being developed as a practical fintech data and AI engineering system.
+![High-Level Architecture](architecture/EDINET_Financial_Disclosure_Data_Platform_High_Level_Architecture.png)
 
-The current stage focuses on:
+### Cortex Agent Architecture
 
-* EDINET data ingestion
-* cloud deployment with GCP
-* infrastructure management with Terraform
-* CI/CD with GitHub Actions
-* raw financial data storage in Google Cloud Storage
-* Snowflake RAW layer design
-* dbt-based transformation design
-* preparing the foundation for AI and agent-based financial analysis
+The detailed architecture shows the implementation design, including GCP runtime, GCS to Snowflake ingestion, dbt models, Cortex Agent, Cortex Analyst, Cortex Search, and CI/CD.
 
-The next stage will likely involve building AI-powered workflows with Snowflake Cortex Agent, including natural-language interaction with financial data, document/data extraction support, and quality-conscious LLM system design.
+![Cortex Agent Architecture](architecture/EDINET_Financial_Disclosure_Data_Platform_with_Snowflake_Cortex_Agent.png)
 
-## Main Components
+---
 
-### EDINET External API
+## System Layers
 
-The pipeline retrieves financial disclosure data from the EDINET API, including filing metadata and financial statement CSV files.
+### 1. GCP Runtime and Ingestion Layer
 
-### Python Ingestion Pipeline
+The ingestion pipeline runs on Google Cloud using Cloud Run Jobs.
 
-The Python pipeline fetches EDINET metadata and document CSV files, handles retries and failures, and saves raw files into Google Cloud Storage.
+Main components:
 
-The pipeline is designed to support:
+* **Cloud Scheduler** triggers the pipeline on a schedule
+* **Cloud Run Job** runs the Python ingestion pipeline
+* **Secret Manager** stores the EDINET API key
+* **Google Cloud Storage** stores raw EDINET files
+* **Cloud Run Job Service Account** controls runtime permissions
 
-* metadata collection
-* financial document CSV download
-* ZIP extraction
-* failed document tracking
-* GCS upload
-* testable API key injection
-* Secret Manager-based credential loading during real execution
+The Python pipeline retrieves disclosure metadata and financial documents from the EDINET API. It handles retries, extracts CSV files from ZIP documents, and uploads the raw files to GCS.
 
-### Google Cloud Platform
+---
 
-GCP is used to run and operate the ingestion pipeline in a cloud environment.
+### 2. GCS to Snowflake Ingestion Layer
 
-Current GCP components include:
+Google Cloud Storage is used as the raw data lake before data is loaded into Snowflake.
 
-* Cloud Run Jobs
-* Cloud Scheduler
-* Google Cloud Storage
-* Artifact Registry
-* Secret Manager
-* IAM service accounts
-* Workload Identity for GitHub Actions authentication
-
-### Terraform Infrastructure
-
-Terraform is used to manage the GCP infrastructure.
-
-The infrastructure setup includes:
-
-* storage bucket
-* Artifact Registry repository
-* Cloud Run Job
-* Cloud Scheduler
-* Secret Manager access
-* IAM permissions
-* GitHub Actions Workload Identity setup
-
-### CI/CD with GitHub Actions
-
-GitHub Actions is used for continuous integration and deployment preparation.
-
-Current CI work includes:
-
-* Python import checks
-* pytest test execution
-* dependency management with `uv`
-* avoiding cloud credential loading during import
-* making pipeline functions testable with fake API keys
-* preparing the project for safe cloud deployment
-
-### Google Cloud Storage
-
-Google Cloud Storage is used as the raw data lake.
-
-Raw EDINET files are stored before being loaded into Snowflake.
-
-Example storage paths:
+The planned ingestion flow is:
 
 ```text
-raw/metadata/
-raw/documents/
-raw/reference/
+GCS object-created notification
+  ↓
+Pub/Sub topic
+  ↓
+Pub/Sub subscription
+  ↓
+Snowpipe auto-ingest
+  ↓
+Snowflake RAW tables
 ```
 
-### Snowflake RAW Layer
+This design creates a scalable path from cloud storage into the Snowflake data warehouse.
 
-Snowflake is planned as the main warehouse for storing and querying EDINET data.
+---
 
-The RAW layer stores ingested EDINET data in its original or minimally processed form.
+### 3. Snowflake Data Warehouse Layer
 
-Expected RAW tables include:
+Snowflake is used as the main analytical warehouse.
 
-* document metadata
-* company master data
-* annual report financial values
+The data warehouse flow is organized as:
 
-### Snowpipe
+```text
+RAW tables
+  ↓
+dbt staging models
+  ↓
+dbt intermediate models
+  ↓
+dbt marts
+  ↓
+AI-ready tables
+```
 
-Snowpipe is planned to load newly added files from Cloud Storage into Snowflake RAW tables using cloud notifications.
+The **RAW layer** stores EDINET data in its original or minimally processed form.
 
-This allows new EDINET files uploaded to GCS to be automatically ingested into Snowflake.
+The **dbt layer** cleans and transforms the raw data. This includes deduplication, latest-version selection, financial metric extraction, company-level aggregation, and long-text preparation for semantic search.
 
-### dbt Transformations
+The final dbt marts create two AI-ready table groups:
 
-dbt will transform RAW tables into clean, structured analytics models.
+| Table group                     | Used by        | Purpose                                                                                        |
+| ------------------------------- | -------------- | ---------------------------------------------------------------------------------------------- |
+| Analyst-ready structured tables | Cortex Analyst | Financial metrics, revenue, growth rates, fiscal years, rankings, and company comparisons      |
+| Search-ready long-text tables   | Cortex Search  | Disclosure text, business explanations, risk factors, growth drivers, and qualitative evidence |
 
-The transformation flow is organized into:
+This separation allows the system to support both structured financial analysis and document-based reasoning.
 
-* staging
-* intermediate
-* marts
+---
 
-The dbt layer will handle cleaning, deduplication, latest-version selection, financial metric extraction, and growth company analysis.
+### 4. Cortex Agent Layer
 
-### Snowflake MARTS Layer
+The AI layer is built around Snowflake Cortex Agent.
 
-The MARTS layer will contain analytics-ready tables used for growth company analysis.
+Cortex Agent sits on top of the AI-ready Snowflake tables and decides which tool to use based on the user question.
 
-Example marts include:
+| Tool           | Connected data                  | Purpose                                                     |
+| -------------- | ------------------------------- | ----------------------------------------------------------- |
+| Cortex Analyst | Analyst-ready structured tables | Answers numeric and structured financial questions          |
+| Cortex Search  | Search-ready long-text tables   | Retrieves relevant disclosure text and qualitative evidence |
 
-* `mart_company_growth`
-* `mart_high_growth_companies`
-* `mart_industry_growth_summary`
-* `mart_company_financial_trends`
+For structured questions, the agent uses **Cortex Analyst** to answer questions about revenue, growth rate, fiscal year, company name, rankings, and comparisons.
 
-### AI / Agent Preparation
+For document-based questions, the agent uses **Cortex Search** to retrieve relevant filing text, business descriptions, risk factors, and growth drivers.
 
-The project is moving toward AI-powered financial analysis using Snowflake and LLM-related tools.
+For questions that require both numbers and explanation, the agent can use both tools. For example, it can first identify high-growth companies with Cortex Analyst, then use Cortex Search to find the disclosure text explaining their growth.
 
-The likely next direction is Snowflake Cortex Agent, which can support natural-language workflows over structured and semi-structured financial data.
-
-Potential use cases include:
-
-* asking questions over financial disclosure data
-* retrieving company financial metrics
-* explaining growth trends
-* comparing companies or industries
-* combining SQL-based retrieval with document-based context
-* supporting internal financial data workflows
-
-## Planned Cortex Agent Direction
-
-The planned AI layer may use Snowflake Cortex Agent to allow users to interact with EDINET financial data through natural language.
+The final answer combines structured metrics and supporting evidence into a clear response for the user.
 
 Example questions:
 
@@ -168,120 +124,22 @@ Why is this company considered high growth?
 What are the main growth drivers mentioned in the filing?
 Compare the growth factors of two companies.
 Which industries contain the most high-growth companies?
+Show the financial trend for this company over time.
 ```
 
-The system direction is to combine:
+---
 
-* structured retrieval from Snowflake tables for exact financial metrics
-* document or disclosure text retrieval for explanations and evidence
-* agent-style workflows for financial analysis tasks
-* cost-conscious usage of Snowflake AI tools
+## Key Technologies
 
-## Current Scope
-
-The current project scope focuses on the first production-style stage:
-
-* EDINET API ingestion
-* Python data pipeline development
-* GCS raw data storage
-* Secret Manager integration
-* Cloud Run Job deployment
-* Cloud Scheduler automation
-* Terraform infrastructure management
-* GitHub Actions CI/CD
-* pytest-based pipeline testing
-* Snowflake RAW layer design
-* dbt transformation planning
-* AI-agent-ready data preparation
-
-The application and agent layer can be added in the next stage.
-
-## Technologies
-
-* Python
-* SQL
-* Google Cloud Platform
-* Cloud Run Jobs
-* Cloud Scheduler
-* Google Cloud Storage
-* Artifact Registry
-* Secret Manager
-* Terraform
-* GitHub Actions
-* Workload Identity
-* Docker
-* pytest
-* uv
-* Snowflake
-* Snowpipe
-* dbt
-* Snowflake Cortex Agent
-* RAG / AI agent preparation
-
-## Environment Variables
-
-The pipeline uses environment variables for cloud execution.
-
-Required variables include:
-
-```env
-GCP_PROJECT_ID=your_gcp_project_id
-EDINET_API_KEY_SECRET_NAME=your_secret_name
-GCS_BUCKET_NAME=your_gcs_bucket_name
-```
-
-The actual EDINET API key is stored in Google Secret Manager and loaded during real pipeline execution.
-
-For local testing, functions are designed to accept fake API keys so tests do not require real GCP credentials.
-
-## Local Development
-
-Install dependencies with `uv`:
-
-```bash
-uv sync
-```
-
-Run import check:
-
-```bash
-uv run python -c "import pipeline.main; print('Pipeline import OK')"
-```
-
-Run tests:
-
-```bash
-uv run pytest tests/pipeline/
-```
-
-## Docker Execution
-
-Build the Docker image:
-
-```bash
-docker build -t edinet-growth-platform .
-```
-
-Run the pipeline:
-
-```bash
-docker run --env-file .env edinet-growth-platform
-```
-
-## Cloud Deployment Direction
-
-The cloud deployment direction uses:
-
-* GitHub Actions for CI/CD
-* Workload Identity for secure authentication from GitHub to GCP
-* Artifact Registry for Docker images
-* Cloud Run Jobs for executing the pipeline
-* Cloud Scheduler for daily automation
-* Secret Manager for EDINET API key storage
-* GCS for raw EDINET data storage
-
-## License
-
-This repository is currently intended for private project development.
-
-All rights reserved.
+* **Python** for EDINET API ingestion
+* **Google Cloud Run Jobs** for scheduled pipeline execution
+* **Google Cloud Storage** for raw file storage
+* **Secret Manager** for secure API key management
+* **Snowflake** for the data warehouse
+* **Snowpipe** for GCS to Snowflake ingestion
+* **dbt** for data transformation
+* **Cortex Analyst** for structured financial analysis
+* **Cortex Search** for semantic search over disclosure text
+* **Cortex Agent** for AI orchestration
+* **Terraform** for infrastructure as code
+* **GitHub Actions** for CI/CD
